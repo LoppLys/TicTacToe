@@ -61,6 +61,7 @@ public class TicTacToe {
         try {
             if (gameBoard[y][x] == ' ') {
                 gameBoard[y][x] = HUMAN;
+                movesMade++;
                 checkIfHumanWon(x, y);
             }
             else{
@@ -76,6 +77,7 @@ public class TicTacToe {
         int y = i/3;
         int x = i%3;
         gameBoard[y][x] = COMP;
+        movesMade++;
         checkIfCompWon(x, y);
     }
 
@@ -164,6 +166,7 @@ public class TicTacToe {
                 }
             }
         }
+
         return new MoveInfo(bestMove, value);
     }
 
@@ -226,12 +229,9 @@ public class TicTacToe {
         return null;
     }
 
-    
-
     public static void main(String[] args){
         TicTacToe game = new TicTacToe();
     }
-
 
     public class MoveInfo {
         private int move; 
@@ -242,10 +242,6 @@ public class TicTacToe {
             this.value = value;
         }
     }
-
-
-
-
 }
 
 
