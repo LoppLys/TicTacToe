@@ -36,7 +36,7 @@ public class TicTacToe {
             int x = scanner.nextInt() - 1;
             int y = scanner.nextInt() - 1;
             printHumanChoice(x, y);
-            printComputerChoice(findCompMove().value);
+            printComputerChoice(findCompMove().move);
         }
         scanner.close();
     }
@@ -159,6 +159,7 @@ public class TicTacToe {
                     if(responseValue > value){
                         value = responseValue;
                         bestMove = i;
+                        //moveValues[i] = responseValue;
                     }
                 }
             }
@@ -194,8 +195,8 @@ public class TicTacToe {
                     if(responseValue < value){
                         value = responseValue;
                         bestMove = i;
+                        //moveValues[i] = responseValue;
                     }
-                    moveValues[i] = responseValue;
                 }
             }
         }
@@ -240,8 +241,6 @@ public class TicTacToe {
             this.move = move;
             this.value = value;
         }
-        
-    
     }
 
 
