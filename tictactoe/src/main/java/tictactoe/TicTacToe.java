@@ -10,7 +10,6 @@ public class TicTacToe {
     private static final int DRAW = 0;
     private static final int COMP_WIN = 1; 
     private static final int FULL = 9;
-    private int[] moveValues = new int[FULL];
     private int movesMade = 0;
     private char[][] gameBoard;
     private boolean gameOver = false;
@@ -62,7 +61,11 @@ public class TicTacToe {
             if (gameBoard[y][x] == ' ') {
                 gameBoard[y][x] = HUMAN;
                 movesMade++;
-                checkIfHumanWon(x, y);
+                if(checkIfHumanWon(x, y)){
+                    printGameBoard();
+                    System.out.println("The human has won, i cant believe it.");
+                    gameOver = true;
+                }
             }
             else{
                 System.out.println("That spot is already taken you crazy human!");
@@ -78,23 +81,19 @@ public class TicTacToe {
         int x = i%3;
         gameBoard[y][x] = COMP;
         movesMade++;
-        checkIfCompWon(x, y);
-    }
-
-    private void checkIfHumanWon(int x, int y){
-        if(checkRow(y, HUMAN) || checkColumn(x, HUMAN) || checkDiagonal(x, y, HUMAN)){
-            printGameBoard();
-            System.out.println("The human has won, i cant believe it.");
-            gameOver = true;
-        }
-    }
-
-    private void checkIfCompWon(int x, int y){
-        if(checkRow(y, COMP) || checkColumn(x, COMP) || checkDiagonal(x, y, COMP)){
+        if(checkIfCompWon(x, y)){
             printGameBoard();
             System.out.println("Hahaha I win, lousy human.");
             gameOver = true;
         }
+    }
+
+    private boolean checkIfHumanWon(int x, int y){
+        return checkRow(y, HUMAN) || checkColumn(x, HUMAN) || checkDiagonal(x, y, HUMAN);
+    }
+
+    private boolean checkIfCompWon(int x, int y){
+        return checkRow(y, COMP) || checkColumn(x, COMP) || checkDiagonal(x, y, COMP);
     }
 
     private boolean checkRow(int y, char marker){
@@ -149,11 +148,12 @@ public class TicTacToe {
         if(fullboard()){
             value = DRAW;
         }else if((quickWinInfo = immediateCompWin()) != null){
+            System.out.println("Comp quick win at " + quickWinInfo.move);
             return quickWinInfo;
         }else{
             //gå igenom alla moves
             value = COMP_LOSS;
-            for(int i = 0; i < FULL - 1; i++){
+            for(int i = 0; i < FULL; i++){
                 if(gameBoard[i/3][i%3] == ' '){
                     place(i, COMP);
                     responseValue = findHumanMove().value;
@@ -161,7 +161,6 @@ public class TicTacToe {
                     if(responseValue > value){
                         value = responseValue;
                         bestMove = i;
-                        //moveValues[i] = responseValue;
                     }
                 }
             }
@@ -186,11 +185,12 @@ public class TicTacToe {
         if(fullboard()){
             value = DRAW;
         }else if((quickWinInfo = immediateHumanWin()) != null){
+            System.out.println("Human quick win at " + quickWinInfo.move);
             return quickWinInfo;
         }else{
             //gå igenom alla moves
             value = COMP_WIN;
-            for(int i = 0; i < FULL - 1; i++){
+            for(int i = 0; i < FULL; i++){
                 if(gameBoard[i/3][i%3] == ' '){
                     place(i, COMP);
                     responseValue = findCompMove().value;
@@ -198,18 +198,31 @@ public class TicTacToe {
                     if(responseValue < value){
                         value = responseValue;
                         bestMove = i;
-                        //moveValues[i] = responseValue;
                     }
                 }
             }
         }
+
         return new MoveInfo(bestMove, value);
     }
 
+    private MoveInfo immediateCompWin(){
+        for(int y = 0; y < gameBoard.length; y++){
+            for(int x = 0; x < gameBoard[y].length; x++){
+                if(gameBoard[y][x] == ' ' && checkIfCompWon(x, y)){
+                    return new MoveInfo(y*3 + x, 1);
+                }
+            }
+        }
+        return null;
+    }
+
     private MoveInfo immediateHumanWin(){
-        for(int i = 0; i < FULL; i++){
-            if(moveValues[i] == -1){
-                return new MoveInfo(i,-1);
+        for(int y = 0; y < gameBoard.length; y++){
+            for(int x = 0; x < gameBoard[y].length; x++){
+                if(gameBoard[y][x] == ' ' && checkIfHumanWon(x, y)){
+                    return new MoveInfo(y*3 + x, -1);
+                }
             }
         }
         return null;
@@ -218,15 +231,6 @@ public class TicTacToe {
 
     private boolean fullboard(){
         return movesMade == FULL;  
-    }
-
-    private MoveInfo immediateCompWin(){
-        for(int i = 0; i < FULL; i++){
-            if(moveValues[i] == 1){
-                return new MoveInfo(i,1);
-            }
-        }
-        return null;
     }
 
     public static void main(String[] args){
