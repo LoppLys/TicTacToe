@@ -9,7 +9,7 @@ public class TicTacToe {
     private static final int COMP_LOSS = -1; 
     private static final int DRAW = 0;
     private static final int COMP_WIN = 1; 
-    private static final int FULL = 225;
+    private static final int FULL = 9;
     private int[] moveValues = new int[FULL];
     private int movesMade = 0;
     private char[][] gameBoard;
@@ -28,7 +28,7 @@ public class TicTacToe {
     }
 
     private void run(){
-        createBoard(15);
+        createBoard(3);
         Scanner scanner = new Scanner(System.in);
         while(!gameOver) {
             printGameBoard();
@@ -73,8 +73,8 @@ public class TicTacToe {
     }
 
     private void printComputerChoice(int i){
-        int y = i/15;
-        int x = (i%15) - 1;
+        int y = i/3;
+        int x = i%3;
         gameBoard[y][x] = COMP;
         checkIfCompWon(x, y);
     }
@@ -152,7 +152,7 @@ public class TicTacToe {
             //gå igenom alla moves
             value = COMP_LOSS;
             for(int i = 0; i < FULL - 1; i++){
-                if(gameBoard[i/15][(i%15) - 1] == ' '){
+                if(gameBoard[i/3][i%3] == ' '){
                     place(i, COMP);
                     responseValue = findHumanMove().value;
                     unplace(i);
@@ -167,11 +167,11 @@ public class TicTacToe {
     }
 
     private void place(int i, char player){
-        gameBoard[i/15][(i%15) - 1] = player;
+        gameBoard[i/3][i%3] = player;
     }
 
     private void unplace(int i){
-        gameBoard[i/15][(i%15) - 1] = ' ';
+        gameBoard[i/3][i%3] = ' ';
     }
     
     public MoveInfo findHumanMove(){
@@ -187,7 +187,7 @@ public class TicTacToe {
             //gå igenom alla moves
             value = COMP_WIN;
             for(int i = 0; i < FULL - 1; i++){
-                if(gameBoard[i/15][(i%15) - 1] == ' '){
+                if(gameBoard[i/3][i%3] == ' '){
                     place(i, COMP);
                     responseValue = findCompMove().value;
                     unplace(i);
@@ -195,6 +195,7 @@ public class TicTacToe {
                         value = responseValue;
                         bestMove = i;
                     }
+                    moveValues[i] = responseValue;
                 }
             }
         }
