@@ -1,20 +1,26 @@
 package tictactoe;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class TicTacToe {
-    private char[][] gameBoard = {  {' ', ' ', ' ', ' ', ' '},
-                                    {' ', ' ', ' ', ' ', ' '},
-                                    {' ', ' ', ' ', ' ', ' '},
-                                    {' ', ' ', ' ', ' ', ' '},
-                                    {' ', ' ', ' ', ' ', ' '}};
+    private char[][] gameBoard;
     private boolean gameOver = false;
 
     public TicTacToe(){
         run();
     }
 
+    private void createBoard(int size){
+        gameBoard = new char[size][size];
+
+        for (char[] chars : gameBoard) {
+            Arrays.fill(chars, ' ');
+        }
+    }
+
     private void run(){
+        createBoard(15);
         Scanner scanner = new Scanner(System.in);
         while(!gameOver) {
             printGameBoard();
@@ -34,7 +40,11 @@ public class TicTacToe {
             }
             System.out.println("|");
             if(i != gameBoard.length-1) {
-                System.out.println("+---+---+---+---+---+");
+                for(int k = 0; k < gameBoard[i].length; k++){
+                    System.out.print("+---");
+                }
+                System.out.println("+");
+
             }
         }
     }
