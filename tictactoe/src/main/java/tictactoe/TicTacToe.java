@@ -121,8 +121,50 @@ public class TicTacToe {
         return false;
     }
 
+    
+
     public static void main(String[] args){
         TicTacToe game = new TicTacToe();
     }
+
+
+    public class MoveInfo {
+        private static final int COMP_LOSS = -1; 
+        private static final int DRAW = 0;
+        private static final int COMP_WIN = 1; 
+        private int move; 
+        private int value; 
+    
+        public MoveInfo(int move, int value){
+            this.move = move;
+            this.value = value;
+        }
+        //finds best move for computer
+        public MoveInfo findCompMove(){
+            int i;
+            int responseValue;
+            int value;
+            int bestValue;
+            MoveInfo quickWinInfo;
+        }
+    
+        
+        public MoveInfo findHumanMove(){
+    
+        }
+    
+    
+        private boolean fullboard(){
+            
+        }
+    
+    
+    }
+
+
+
+
 }
+
+
 
