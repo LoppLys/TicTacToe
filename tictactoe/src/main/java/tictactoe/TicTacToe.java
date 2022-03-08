@@ -8,8 +8,8 @@ public class TicTacToe {
     private static final char COMP = 'O';
     private static final int COMP_LOSS = -1; 
     private static final int DRAW = 0;
-    private static final int COMP_WIN = 1; 
-    private static final int FULL = 9;
+    private static final int COMP_WIN = 1;
+    private static final int SIZE = 5;
     private int movesMade = 0;
     private char[][] gameBoard;
     private boolean gameOver = false;
@@ -18,8 +18,8 @@ public class TicTacToe {
         run();
     }
 
-    private void createBoard(int size){
-        gameBoard = new char[size][size];
+    private void createBoard(){
+        gameBoard = new char[SIZE][SIZE];
 
         for (char[] chars : gameBoard) {
             Arrays.fill(chars, ' ');
@@ -27,7 +27,7 @@ public class TicTacToe {
     }
 
     private void run(){
-        createBoard(3);
+        createBoard();
         Scanner scanner = new Scanner(System.in);
         while(!gameOver) {
             printGameBoard();
@@ -83,8 +83,8 @@ public class TicTacToe {
             gameOver = true;
             return;
         }
-        int y = i/3;
-        int x = i%3;
+        int y = i/SIZE;
+        int x = i%SIZE;
         gameBoard[y][x] = COMP;
         movesMade++;
         if(checkIfCompWon(x, y)){
@@ -132,9 +132,9 @@ public class TicTacToe {
 
             return true;
         }
-        else if(x+y == 2){
+        else if(x+y == SIZE - 1){
             for(int i = 0; i < gameBoard.length; i++){
-                if(gameBoard[2-i][i] != marker){
+                if(gameBoard[SIZE-1-i][i] != marker){
                     return false;
                 }
             }
@@ -158,8 +158,8 @@ public class TicTacToe {
         }else{
             //gå igenom alla moves
             value = COMP_LOSS;
-            for(int i = 0; i < FULL; i++){
-                if(gameBoard[i/3][i%3] == ' '){
+            for(int i = 0; i < SIZE*SIZE; i++){
+                if(gameBoard[i/SIZE][i%SIZE] == ' '){
                     place(i, COMP);
                     responseValue = findHumanMove().value;
                     unplace(i);
@@ -186,8 +186,8 @@ public class TicTacToe {
         }else{
             //gå igenom alla moves
             value = COMP_WIN;
-            for(int i = 0; i < FULL; i++){
-                if(gameBoard[i/3][i%3] == ' '){
+            for(int i = 0; i < SIZE*SIZE; i++){
+                if(gameBoard[i/SIZE][i%SIZE] == ' '){
                     place(i, HUMAN);
                     responseValue = findCompMove().value;
                     unplace(i);
@@ -203,12 +203,12 @@ public class TicTacToe {
     }
 
     private void place(int i, char player){
-        gameBoard[i/3][i%3] = player;
+        gameBoard[i/SIZE][i%SIZE] = player;
         movesMade++;
     }
 
     private void unplace(int i){
-        gameBoard[i/3][i%3] = ' ';
+        gameBoard[i/SIZE][i%SIZE] = ' ';
         movesMade--;
     }
 
@@ -216,12 +216,12 @@ public class TicTacToe {
         for(int y = 0; y < gameBoard.length; y++){
             for(int x = 0; x < gameBoard[y].length; x++){
                 if(gameBoard[y][x] == ' '){
-                    place(y*3 + x, COMP);
+                    place(y*SIZE + x, COMP);
                     if(checkIfCompWon(x, y)){
-                        unplace(y*3 + x);
-                        return new MoveInfo(y*3 + x, 1);
+                        unplace(y*SIZE + x);
+                        return new MoveInfo(y*SIZE + x, 1);
                     }
-                    unplace(y*3 + x);
+                    unplace(y*SIZE + x);
 
                 }
             }
@@ -234,12 +234,12 @@ public class TicTacToe {
         for(int y = 0; y < gameBoard.length; y++){
             for(int x = 0; x < gameBoard[y].length; x++){
                 if(gameBoard[y][x] == ' '){
-                    place(y*3 + x, HUMAN);
+                    place(y*SIZE + x, HUMAN);
                     if(checkIfHumanWon(x, y)){
-                        unplace(y*3 + x);
-                        return new MoveInfo(y*3 + x, -1);
+                        unplace(y*SIZE + x);
+                        return new MoveInfo(y*SIZE + x, -1);
                     }
-                    unplace(y*3 + x);
+                    unplace(y*SIZE + x);
 
                 }
             }
@@ -250,7 +250,7 @@ public class TicTacToe {
 
 
     private boolean fullboard(){
-        return movesMade == FULL;  
+        return movesMade == SIZE*SIZE;
     }
 
     public static void main(String[] args){
