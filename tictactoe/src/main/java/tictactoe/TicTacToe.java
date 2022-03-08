@@ -12,10 +12,11 @@ public class TicTacToe {
     private static final int DRAW = 0;
     private static final int COMP_WIN = 1;
     private static final int SIZE = 5;
-    private static final int MAX_LOOPS = 5;
+    private static final int MAX_DEPTH = 10;
     private int movesMade = 0;
     private char[][] gameBoard;
     private boolean gameOver = false;
+    private boolean isPlayerTurn = true;
 
     public TicTacToe(){
         run();
@@ -32,13 +33,18 @@ public class TicTacToe {
     private void run(){
         createBoard();
         Scanner scanner = new Scanner(System.in);
+
         while(!gameOver) {
-            printGameBoard();
-            System.out.println("Where do you want to put a marker? x y");
-            int x = scanner.nextInt() - 1;
-            int y = scanner.nextInt() - 1;
-            printHumanChoice(x, y);
-            printComputerChoice(findCompMove(COMP_LOSS, COMP_WIN, 0).move);
+
+            if(isPlayerTurn){
+                printGameBoard();
+                System.out.println("Where do you want to put a marker? x y");
+                int x = scanner.nextInt() - 1;
+                int y = scanner.nextInt() - 1;
+                printHumanChoice(x, y);
+            } else {
+                printComputerChoice(findCompMove(COMP_LOSS, COMP_WIN, 0).move);
+            }
         }
         scanner.close();
     }
@@ -61,8 +67,9 @@ public class TicTacToe {
 
     private void printHumanChoice(int x, int y){
         try {
-            if (gameBoard[y][x] == ' ') {
+            if (isEmpty(x, y)) {
                 place(y*SIZE + x, HUMAN);
+                isPlayerTurn = !isPlayerTurn;
                 if(checkIfHumanWon(x, y)){
                     printGameBoard();
                     System.out.println("The human has won, i cant believe it.");
@@ -86,6 +93,7 @@ public class TicTacToe {
             return;
         }
         place(i, COMP);
+        isPlayerTurn = !isPlayerTurn;
         if(checkIfCompWon(i%SIZE, i/SIZE)){
             printGameBoard();
             System.out.println("Hahaha I win, lousy human.");
@@ -145,7 +153,18 @@ public class TicTacToe {
     }
 
     //finds best move for computer
-    public MoveInfo findCompMove(int alpha, int beta, int loops){
+    public MoveInfo findCompMove(int alpha, int beta, int depth){
+        if(isEmpty(2, 2)){
+            return new MoveInfo(2*SIZE + 2, 1);
+        }else if(movesMade < 4){
+            for(int i = 1; i < 3; i++){
+                for(int j = 1; j < 3; j++){
+                    if(isEmpty(j, i)){
+                        return new MoveInfo(i*SIZE + j, 1);
+                    }
+                }
+            }
+        }
         int responseValue;
         int value;
         int bestMove = 0; //matrix starts at 0
@@ -154,19 +173,19 @@ public class TicTacToe {
             value = DRAW;
         }else if((quickWinInfo = immediateCompWin()) != null){
             return quickWinInfo;
+        }else if (depth > MAX_DEPTH){
+            value = 0;
         }else {
             //gå igenom alla moves
             value = alpha;
-            if(loops < MAX_LOOPS) {
-                for (int i = 0; i < SIZE * SIZE && value < beta; i++) { // Kör om de värden vi kan hitta är bättre för datorn än det vi har.
-                    if (gameBoard[i / SIZE][i % SIZE] == ' ') {
-                        place(i, COMP);
-                        responseValue = findHumanMove(value, beta, loops).value;
-                        unplace(i);
-                        if (responseValue > value) {
-                            value = responseValue;
-                            bestMove = i;
-                        }
+            for (int i = 0; i < SIZE * SIZE && value < beta; i++) { // Kör om de värden vi kan hitta är bättre för datorn än det vi har.
+                if (isEmpty(i)) {
+                    place(i, COMP);
+                    responseValue = findHumanMove(value, beta, depth + 1).value;
+                    unplace(i);
+                    if (responseValue > value) {
+                        value = responseValue;
+                        bestMove = i;
                     }
                 }
             }
@@ -175,29 +194,30 @@ public class TicTacToe {
         return new MoveInfo(bestMove, value);
     }
     
-    public MoveInfo findHumanMove(int alpha, int beta, int loops){
-
+    public MoveInfo findHumanMove(int alpha, int beta, int depth){
             int responseValue;
             int value;
             int bestMove = 0; //matrix starts at 0
             MoveInfo quickWinInfo;
+
             if (fullboard()) {
                 value = DRAW;
             } else if ((quickWinInfo = immediateHumanWin()) != null) {
                 return quickWinInfo;
-            } else {
+            } else if (depth > MAX_DEPTH){
+                value = 0;
+            }
+            else {
                 //gå igenom alla moves
                 value = beta;
-                if(loops < MAX_LOOPS) {
-                    for (int i = 0; i < SIZE * SIZE && value > alpha; i++) { // Kör om de värden vi kan hitta är bättre för människan än det vi har.
-                        if (gameBoard[i / SIZE][i % SIZE] == ' ') {
-                            place(i, HUMAN);
-                            responseValue = findCompMove(alpha, value, loops + 1).value;
-                            unplace(i);
-                            if (responseValue < value) {
-                                value = responseValue;
-                                bestMove = i;
-                            }
+                for (int i = 0; i < SIZE * SIZE && value > alpha; i++) { // Kör om de värden vi kan hitta är bättre för människan än det vi har.
+                    if (isEmpty(i)) {
+                        place(i, HUMAN);
+                        responseValue = findCompMove(alpha, value, depth + 1).value;
+                        unplace(i);
+                        if (responseValue < value) {
+                            value = responseValue;
+                            bestMove = i;
                         }
                     }
                 }
@@ -219,7 +239,7 @@ public class TicTacToe {
     private MoveInfo immediateCompWin(){
         for(int y = 0; y < gameBoard.length; y++){
             for(int x = 0; x < gameBoard[y].length; x++){
-                if(gameBoard[y][x] == ' '){
+                if(isEmpty(x, y)){
                     place(y*SIZE + x, COMP);
                     if(checkIfCompWon(x, y)){
                         unplace(y*SIZE + x);
@@ -237,7 +257,7 @@ public class TicTacToe {
     private MoveInfo immediateHumanWin(){
         for(int y = 0; y < gameBoard.length; y++){
             for(int x = 0; x < gameBoard[y].length; x++){
-                if(gameBoard[y][x] == ' '){
+                if(isEmpty(x, y)){
                     place(y*SIZE + x, HUMAN);
                     if(checkIfHumanWon(x, y)){
                         unplace(y*SIZE + x);
@@ -254,6 +274,14 @@ public class TicTacToe {
 
     private boolean fullboard(){
         return movesMade == SIZE*SIZE;
+    }
+
+    private boolean isEmpty(int i){
+        return gameBoard[i / SIZE][i % SIZE] == ' ';
+    }
+
+    private boolean isEmpty(int x, int y){
+        return gameBoard[y][x] == ' ';
     }
 
     public static void main(String[] args){
