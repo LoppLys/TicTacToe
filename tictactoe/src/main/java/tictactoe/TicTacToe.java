@@ -159,15 +159,15 @@ public class TicTacToe {
      * is not found in 10 depths of the min-max-tree the method will return a sub optimal
      * result, with a neutral value as the best move. This indicates that the computer
      * does not know which move is the best one and assumes that it is more appropreate 
-     * to return a suboptimal result rathar than to find the optimal one since if would 
+     * to return a suboptimal result rather than to find the optimal one since if would 
      * take to long to find it. The method uses alpha-beta pruning which means that it 
      * will skip searching parts of the tree because it already knows which result is the
      * best one for either side. 
      * 
      * @param alpha will at first be equal to COMP_LOSS. Will later keep track
      * of the best value for the computer so far, assuming best play. Indicator for
-     * if it is nessecary to procede searching for a better move or if the search would 
-     * be in vain sice it would not make a differens to the result. 
+     * if it is necessary to procede searching for a better move or if the search would 
+     * be in vain since it would not make a differens to the result. 
      * @param beta will at first be equal to COMP_WIN. Will later keep track of 
      * the best move for the human so far, assuming best play. Indicator for if
      * we are able to prune parts of the tree.
