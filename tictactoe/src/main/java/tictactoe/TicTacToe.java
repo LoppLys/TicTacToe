@@ -150,7 +150,32 @@ public class TicTacToe {
         return false;
     }
 
-    //finds best move for computer
+    /**
+     * This method finds the most appropreate move for the computer to perform. It will
+     * return a MoveInfo object where the information conserning which move the computer
+     * has made exist. MoveInfo.move returns the square on the board that the computer 
+     * decided to place at and MoveInfo.value returns if that particular place would in 
+     * the best case lead to a win (1), a loss (-1) or a draw(0). If the most optimal move
+     * is not found in 10 depths of the min-max-tree the method will return a sub optimal
+     * result, with a neutral value as the best move. This indicates that the computer
+     * does not know which move is the best one and assumes that it is more appropreate 
+     * to return a suboptimal result rathar than to find the optimal one since if would 
+     * take to long to find it. The method uses alpha-beta pruning which means that it 
+     * will skip searching parts of the tree because it already knows which result is the
+     * best one for either side. 
+     * 
+     * @param alpha will at first be equal to COMP_LOSS. Will later keep track
+     * of the best value for the computer so far, assuming best play. Indicator for
+     * if it is nessecary to procede searching for a better move or if the search would 
+     * be in vain sice it would not make a differens to the result. 
+     * @param beta will at first be equal to COMP_WIN. Will later keep track of 
+     * the best move for the human so far, assuming best play. Indicator for if
+     * we are able to prune parts of the tree.
+     * @param depth a counter for how deep into the tree search we are. 
+     * @return the MoveInfo object containting the move the computer decided to make
+     * @see MoveInfo
+     *
+     */
     public MoveInfo findCompMove(int alpha, int beta, int depth){
         if(isEmpty(2, 2)){
             return new MoveInfo(2*SIZE + 2, 1);
