@@ -152,14 +152,14 @@ public class TicTacToe {
 
     /**
      * This method finds the most appropreate move for the computer to perform. It will
-     * return a MoveInfo object where the information conserning which move the computer
-     * has made exist. MoveInfo.move returns the square on the board that the computer 
+     * return a MoveInfo object containing the information conserning which move the computer
+     * should make. MoveInfo.move returns the square on the board that the computer
      * decided to place at and MoveInfo.value returns if that particular place would in 
      * the best case lead to a win (1), a loss (-1) or a draw(0). If the most optimal move
      * is not found in 10 depths of the min-max-tree the method will return a sub optimal
      * result, with a neutral value as the best move. This indicates that the computer
      * does not know which move is the best one and assumes that it is more appropreate 
-     * to return a suboptimal result rather than to find the optimal one since if would 
+     * to return a suboptimal result rather than to find the optimal one since it would
      * take to long to find it. The method uses alpha-beta pruning which means that it 
      * will skip searching parts of the tree because it already knows which result is the
      * best one for either side. 
